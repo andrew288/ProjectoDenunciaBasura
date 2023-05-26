@@ -1,5 +1,6 @@
 package com.example.projectodenunciabasura.Screen
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -26,12 +28,15 @@ import com.example.projectodenunciabasura.Component.DropDownCategoriaEspacioPubl
 import com.example.projectodenunciabasura.Component.TextAreaCustom
 import com.example.projectodenunciabasura.Navigation.Routes
 import com.example.projectodenunciabasura.R
-
+import com.example.projectodenunciabasura.data.Repository
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun ScreenRegisterDenuncia(navController: NavController) {
+fun ScreenRegisterDenuncia(navController: NavController, repository: Repository) {
+
     var descripcionDenuncia = remember { mutableStateOf("") }
     var fechaDenuncia = remember { mutableStateOf("") }
     var referenciaLugar = remember { mutableStateOf("") }
+    // traer categorias de base de datos
     var categories = listOf("Categoria 1", "Categoria 2", "Categoria 3", "Categoria 4")
     var selectedCategory = remember { mutableStateOf(categories[0]) }
 

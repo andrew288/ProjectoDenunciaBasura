@@ -7,4 +7,6 @@ sealed class Routes(
     object ScreenLoginAccount : Routes("LoginAccount")
     object ScreenHomeAccount: Routes("HomeAccount")
     object ScreenRegisterDenuncia: Routes("RegisterDenuncia")
+    object ScreenDetalleDenuncia: Routes("DetalleDenuncia")
+
 }

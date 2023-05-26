@@ -23,7 +23,7 @@ fun ButtonCustom(
         containerColor = colorResource(id = R.color.green_dark)
     )
     Button(
-        onClick = { onClick },
+        onClick = onClick,
         modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth()

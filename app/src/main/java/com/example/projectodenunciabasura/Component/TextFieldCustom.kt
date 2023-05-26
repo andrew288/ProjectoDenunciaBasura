@@ -32,7 +32,8 @@ fun TextFieldCustom(
     capitalization: KeyboardCapitalization = KeyboardCapitalization.None,
     keyboardType: KeyboardType,
     visualTransformation: VisualTransformation = VisualTransformation.None,
-    paddingCustom: Dp = 16.dp
+    paddingCustom: Dp = 16.dp,
+    readOnly: Boolean = false
 ) {
     val customTextFieldColors = TextFieldDefaults.textFieldColors(
         textColor = Color.Black,
@@ -40,6 +41,7 @@ fun TextFieldCustom(
         focusedIndicatorColor = colorResource(id = R.color.green_light)
     )
         TextField(
+            readOnly = readOnly,
             modifier = Modifier
                 .padding(paddingCustom)
                 .fillMaxWidth()

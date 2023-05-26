@@ -22,17 +22,21 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.projectodenunciabasura.Model.Denuncia
+import com.example.projectodenunciabasura.Navigation.Routes
 import com.example.projectodenunciabasura.R
 
 @Composable
-fun CardDenunciaItem(denuncia: Denuncia) {
+fun CardDenunciaItem(navController: NavController, denuncia: Denuncia) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .shadow(4.dp, RoundedCornerShape(8.dp))
-            .clickable {},
+            .clickable {
+                navController.navigate("${Routes.ScreenDetalleDenuncia.route}/${1}")
+            },
         elevation = CardDefaults.cardElevation(10.dp),
         colors = CardDefaults.cardColors(Color.White)
     ) {

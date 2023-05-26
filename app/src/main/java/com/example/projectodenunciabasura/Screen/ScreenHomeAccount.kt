@@ -74,7 +74,7 @@ fun ScreenHomeAccount(navController: NavController) {
                 )
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     items(denuncias) { denuncia ->
-                        CardDenunciaItem(denuncia = denuncia)
+                        CardDenunciaItem(denuncia = denuncia, navController = navController)
                     }
                 }
             }

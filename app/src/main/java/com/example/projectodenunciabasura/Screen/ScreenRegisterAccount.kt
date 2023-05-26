@@ -11,30 +11,35 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.projectodenunciabasura.Component.ButtonCustom
 import com.example.projectodenunciabasura.Component.TextFieldCustom
 import com.example.projectodenunciabasura.Navigation.Routes
 import com.example.projectodenunciabasura.R
-import com.example.projectodenunciabasura.data.Repository
 import com.example.projectodenunciabasura.data.model.User
+import com.example.projectodenunciabasura.data.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun ScreenRegisterAccount(navController: NavController, repository: Repository) {
-    // scope curutine
-    val scope = rememberCoroutineScope()
+fun ScreenRegisterAccount(navController: NavController) {
+    // view model user
+    lateinit var userViewModel: UserViewModel
+    userViewModel =
+        ViewModelProvider(LocalContext.current as ViewModelStoreOwner).get(UserViewModel::class.java)
 
     // declaracion de estados
     var firstName = remember { mutableStateOf("") }
@@ -107,18 +112,18 @@ fun ScreenRegisterAccount(navController: NavController, repository: Repository) 
                 )
             ) {
                 // registra al usuario y envia a vista LOGIN SCREEN
-                scope.launch {
-                    val userNew = User(
-                        nombre = firstName.value,
-                        apellido = lastName.value,
-                        username = username.value,
-                        password = password.value,
-                        telefono =  numberPhone.value)
-
-                    repository.insertUser(userNew)
+                val userNew = User(
+                    nombre = firstName.value,
+                    apellido = lastName.value,
+                    username = username.value,
+                    password = password.value,
+                    telefono = numberPhone.value
+                )
+                userViewModel.addUser(userNew)
+                userViewModel.viewModelScope.launch {
+                    // Enviar a vista LOGIN SCREEN
+                    navController.navigate(Routes.ScreenLoginAccount.route)
                 }
-                // Enviar a vista LOGIN SCREEN
-                navController.navigate(Routes.ScreenLoginAccount.route)
             } else {
                 // mostramos errores
                 Log.d("APP", "ERRORES")

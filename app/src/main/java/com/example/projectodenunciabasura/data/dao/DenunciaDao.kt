@@ -11,15 +11,19 @@ import com.example.projectodenunciabasura.data.model.DenunciaWithDenunciaImagen
 
 @Dao
 interface DenunciaDao {
-    @Query("SELECT * FROM denuncia")
-    suspend fun getAllDenuncias(): List<Denuncia>
+    @Query("SELECT * FROM denuncia ORDER BY id ASC")
+    fun getAllDenuncias(): LiveData<List<Denuncia>>
 
     @Transaction
-    @Query("SELECT * FROM denuncia")
-    suspend fun getDenunciaWithImages(): List<DenunciaWithDenunciaImagen>
+    @Query("SELECT * FROM denuncia WHERE idUser = :idUser ORDER BY id")
+    fun getDenunciaWithImages(idUser: Int): LiveData<List<DenunciaWithDenunciaImagen>>
+
+    @Transaction
+    @Query("SELECT * FROM denuncia WHERE id = :idDenuncia ORDER BY id")
+    fun getDenunciaWithImagesByUser(idDenuncia: Long): LiveData<List<DenunciaWithDenunciaImagen>>
 
     @Insert
-    suspend fun insert(denuncia: Denuncia)
+    suspend fun insertDenuncia(denuncia: Denuncia): Long
 
     @Delete
     suspend fun delete(denuncia: Denuncia)

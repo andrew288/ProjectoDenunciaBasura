@@ -13,7 +13,7 @@ import com.example.projectodenunciabasura.data.model.User
 
 @Database(
     entities = [User::class, Denuncia::class, DenunciaImagen::class],
-    version = 3, exportSchema = true
+    version = 4, exportSchema = true
 )
 
 abstract class AppDatabase: RoomDatabase() {

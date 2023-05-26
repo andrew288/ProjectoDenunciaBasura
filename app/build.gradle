@@ -94,4 +94,9 @@ dependencies {
     annotationProcessor "androidx.room:room-compiler:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
 
+    // DATA STORE
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
+
+    // UBICACION
+    implementation "com.google.android.gms:play-services-location:21.0.1"
 }

@@ -6,7 +6,6 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavType
@@ -20,8 +19,6 @@ import com.example.projectodenunciabasura.Screen.ScreenHomeAccount
 import com.example.projectodenunciabasura.Screen.ScreenLoginAccount
 import com.example.projectodenunciabasura.Screen.ScreenRegisterAccount
 import com.example.projectodenunciabasura.Screen.ScreenRegisterDenuncia
-import com.example.projectodenunciabasura.data.AppDatabase
-import com.example.projectodenunciabasura.data.Repository
 import com.example.projectodenunciabasura.ui.theme.ProjectoDenunciaBasuraTheme
 
 class MainActivity : ComponentActivity() {
@@ -41,21 +38,20 @@ class MainActivity : ComponentActivity() {
         setContent {
             ProjectoDenunciaBasuraTheme {
                 // contexto de la base de datos
-                val context = LocalContext.current
-                val repository = Repository(AppDatabase.getInstance(context.applicationContext))
                 val navigationController = rememberNavController()
+
                 NavHost(
                     navController = navigationController,
                     startDestination = Routes.ScreenLoginAccount.route
                 ) {
                     composable(Routes.ScreenLoginAccount.route) {
-                        ScreenLoginAccount(navController = navigationController, repository = repository)
+                        ScreenLoginAccount(navController = navigationController)
                     }
                     composable(Routes.ScreenRegisterAccount.route) {
-                        ScreenRegisterAccount(navController = navigationController, repository = repository)
+                        ScreenRegisterAccount(navController = navigationController)
                     }
                     composable(Routes.ScreenRegisterDenuncia.route) {
-                        ScreenRegisterDenuncia(navController = navigationController, repository = repository)
+                        ScreenRegisterDenuncia(navController = navigationController)
                     }
                     composable(Routes.ScreenHomeAccount.route) {
                         ScreenHomeAccount(navController = navigationController)
@@ -63,10 +59,10 @@ class MainActivity : ComponentActivity() {
                     composable(
                         "${Routes.ScreenDetalleDenuncia.route}/{index}",
                         arguments = listOf(navArgument("index") {
-                            type = NavType.IntType
+                            type = NavType.LongType
                         })
                     ) { backStackEntry ->
-                        val index = backStackEntry.arguments?.getInt("index") ?: 0
+                        val index = backStackEntry.arguments?.getLong("index") ?: 0
                         ScreenDetalleDenuncia(
                             navController = navigationController,
                             index = index

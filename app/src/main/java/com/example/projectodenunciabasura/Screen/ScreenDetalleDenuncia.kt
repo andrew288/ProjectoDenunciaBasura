@@ -1,6 +1,8 @@
 package com.example.projectodenunciabasura.Screen
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -21,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
@@ -28,6 +32,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavController
 import com.example.projectodenunciabasura.Component.BadgeCustom
 import com.example.projectodenunciabasura.Component.ImageCarouselRow
@@ -35,23 +41,39 @@ import com.example.projectodenunciabasura.Component.TextAreaCustom
 import com.example.projectodenunciabasura.Component.TextFieldCustom
 import com.example.projectodenunciabasura.Component.TextFieldSimpleCustom
 import com.example.projectodenunciabasura.R
+import com.example.projectodenunciabasura.data.model.DenunciaWithDenunciaImagen
+import com.example.projectodenunciabasura.data.viewmodel.DenunciaViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScreenDetalleDenuncia(navController: NavController, index: Int) {
+fun ScreenDetalleDenuncia(navController: NavController, index: Long) {
+
+    val denunciaModelView: DenunciaViewModel =
+        ViewModelProvider(LocalContext.current as ViewModelStoreOwner).get(DenunciaViewModel::class.java)
+
+    val denunciaWhitImagen = remember {
+        mutableStateOf<List<DenunciaWithDenunciaImagen>>(emptyList())
+    }
+
     // consulta a la base de datos
     var descripcionDenuncia = remember { mutableStateOf("") }
-    var categoriaEspacioPublico = remember { mutableStateOf("") }
     var referenciaLugar = remember { mutableStateOf("") }
-    var imagen1 = remember { mutableStateOf<Bitmap?>(null) }
-    var imagen2 = remember { mutableStateOf<Bitmap?>(null) }
+    var imagen1 = remember { mutableStateOf<ImageBitmap?>(null) }
+    var imagen2 = remember { mutableStateOf<ImageBitmap?>(null) }
     var fechaDenuncia = remember { mutableStateOf("") }
 
-    val images = listOf(
-        ImageBitmap.imageResource(R.drawable.logo_add_image),
-        ImageBitmap.imageResource(R.drawable.logo_add_image),
-        ImageBitmap.imageResource(R.drawable.logo_add_image)
-    )
+    LaunchedEffect(Unit){
+        val denuncia = withContext(Dispatchers.IO){
+            denunciaModelView.getDenunciasWithImagenByDenuncia(index)
+        }
+        denuncia.observeForever{
+                denunciaList ->
+            denunciaWhitImagen.value = denunciaList
+        }
+    }
+
+    val images = listOf(imagen1.value, imagen2.value)
 
     // interfaz de usuario
     Column(
@@ -83,20 +105,6 @@ fun ScreenDetalleDenuncia(navController: NavController, index: Int) {
                     contentColor = Color.White
                 )
             }
-            // campo de categoria
-            Text(
-                text = "Categoria",
-                color = colorResource(id = R.color.green_dark),
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(bottom = 4.dp, start = 20.dp)
-            )
-            TextFieldSimpleCustom(
-                value = categoriaEspacioPublico.value,
-                onValueChange = {
-                    categoriaEspacioPublico.value = it
-                },
-                readOnly = true
-            )
             // referencia de lugar
             Text(
                 text = "Referencia de lugar",
@@ -134,9 +142,14 @@ fun ScreenDetalleDenuncia(navController: NavController, index: Int) {
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(bottom = 10.dp)
                 )
-                ImageCarouselRow(images = images)
+                ImageCarouselRow(images = images as List<ImageBitmap>)
             }
         }
 
     }
+}
+fun convertByteArrayToImageBitmap(image: ByteArray): ImageBitmap{
+    val bitmap = BitmapFactory.decodeByteArray(image,0,image.size)
+    val imageBitmap = bitmap.asImageBitmap()
+    return imageBitmap
 }
